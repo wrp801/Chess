@@ -1,0 +1,16 @@
+name = "Chess"
+uuid = "7174b5c8-a2b0-44d7-a66c-9bf547877828"
+authors = ["Wes Poulsen"]
+version = "0.1.0"
+
+[deps]
+Gtk = "4c0ca9eb-093a-5379-98c5-f87ac0bbbf44"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
