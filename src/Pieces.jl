@@ -27,6 +27,8 @@ function map_column(column::Int)::Char
 	return letter
 end
 
+
+
 ########################################
 #          Chess Piece Types                       
 ########################################
@@ -61,6 +63,7 @@ end
 mutable struct Rook <: ChessPiece
 	Position::Tuple{Char,Int}
 	color::Char
+	is_first_move::Bool
 	points::Int
 	label::Char
 end
@@ -75,6 +78,7 @@ end
 mutable struct King <: ChessPiece
 	Position::Tuple{Char,Int}
 	color::Char
+	is_first_move::Bool
 	label::Char
 end
 
@@ -87,9 +91,16 @@ function Tile(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King})::Tile
 	return Tile(pos)
 end
 
-function Tile(position::String)
-	Tile(position)
+"""
+Parses the position of a chess piece and returns a string to be passed to a Tile struct 
+"""
+function unpack_position(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King})
+	letter = piece.Position[1]
+	position = piece.Position[2]
+	return string(letter,position)
 end
+
+
 
 ########################################
 #         Constructors for Pieces                       
@@ -135,11 +146,11 @@ function Rook(color::Char,column::Int)
 	if color == 'b'
 		pos = (letter,8)
 		label = 'r'
-		return Rook(pos,color,pts,label)
+		return Rook(pos,color,true,pts,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'R'
-		return Rook(pos,color,pts,label)
+		return Rook(pos,color,true,pts,label)
 	else
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
@@ -185,11 +196,11 @@ function King(color::Char,column::Int)
 	if color == 'b'
 		pos = (letter,8)
 		label = 'k'
-		return King(pos,color,label)
+		return King(pos,color,true,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'K'
-		return King(pos,color,label)
+		return King(pos,color,true,label)
 	else
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
@@ -203,33 +214,40 @@ function Empty(row::Int,column::Int)
 	return Empty(pos,label)
 end
 
+function Empty(index::Int)
+	label = "*"
+	tile = Tile(INDEX_TO_TILE[index])
+	letter = tile.square[1]
+	num = tile.square[2]
+	pos = (letter,num)
+	return Empty(pos,label)
 
-function unpack_position(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King})
-	letter = piece.Position[1]
-	position = piece.Position[2]
-	return string(letter,position)
 end
 
-
-# function Base.+(piece::Pawn)
-# 	"""
-# 	The pawns can only move forward. If it is the first move then it can move one or two spots. 
-# 	It can also take another piece that is diagonal of it to the front
-# 	"""
-# 	if piece.color == 'w' 
-		
-# 	else
-
-# 	end
-
-# end
+function can_castle(piece::Union{Rook,King},board::Board)
+	## check for rooks first
+	if isa(piece,Rook)
+		if !piece.is_first_move
+			return false
+		end
 
 
+	elseif isa(piece,King)
+		if !piece.is_first_move
+			return false
+		end
+	end
 
+end
 
-p = Pawn('w',3)
-# println("Position is ", p.Position)
-# println("Is first move: ",p.is_first_move)
-tile = Tile(p)
-
-println("The tile is ",tile.square)
+function find_king(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::Board)::Tile
+	color = piece.color
+	## find the king 
+	for i in 1:64
+		temp_piece = getpiece(i,board)
+		if isa(temp_piece,King) && temp_piece.color == color
+			tile = Tile(temp_piece)
+			return tile
+		end
+	end
+end

@@ -76,7 +76,7 @@ end
 #      Populate Board with Pieces                       
 #######################################
 function initialize!(board::Board)
-	rows = reverse(collect(1:8))
+	rows = collect(1:8)
 	for row in rows
 		if row == 8
 		## populate the black back rank
@@ -119,11 +119,100 @@ function initialize!(board::Board)
 	end
 end
 
-# board = Board()
-# initialize!(board)
-# print_board(board,'b')
+########################################
+#           Helper functions                       
+########################################
+"""
+Checks to see if a given tile on the chess board is occupied or not. If empty, true, otherwise false.
+Params:
+	index::Int : an index of the board, from 1-64 
+	board::Board : a board struct defined in Board.jl
 
+Return Type: Bool
+"""
+function isfree(index::Int,board::Board)
+	str = INDEX_TO_TILE[index]
+	tile = Tile(str)
+	pos = tile.square
+	index = TILE_TO_INDEX[pos]
+	board_tile = board.board[index]
+	return isa(board_tile,Empty)
+end
 
+"""
+Checks to see if a given tile on the chess board is occupied or not. If empty, true, otherwise false.
+Params:
+	index::Tuple{Int,Int} : an index of the board in (row,column) format
+	board::Board : a board struct defined in Board.jl
+
+Return Type: Bool
+"""
+function isfree(index::Tuple{Int,Int},board::Board)
+	single_index = PAIR_TO_INDEX[index]
+	str = INDEX_TO_TILE[single_index]
+	tile = Tile(str)
+	pos = tile.square
+	index = TILE_TO_INDEX[pos]
+	board_tile = board.board[single_index]
+	return isa(board_tile,Empty)
+end
+"""
+Returns a the piece from the board given an index location
+"""
+function getpiece(index::Int,board::Board)::ChessPiece
+	str = INDEX_TO_TILE[index]
+	tile = Tile(str)
+	pos = tile.square
+	index = TILE_TO_INDEX[pos]
+	board_tile = board.board[index]
+	return board_tile
+end
+
+"""
+Given a string (like e5), will return the associated chess piece at that index
+
+"""
+function getpiece(tile::Union{Tile,String},board::Board)::ChessPiece
+	if isa(tile,Tile)
+		index = TILE_TO_INDEX[tile.square]
+	else
+		index = TILE_TO_INDEX[tile]
+	end
+	return board.board[index]
+end
+
+"""
+Returns the index of a piece in terms of (row,column) format
+Params:
+	piece::Union{Pawn,Knight,Bishop,Rook,Queen,King}: Chess piece
+	board::Board: The chess board
+
+Return Type: Union{Tuple{Int,Int},Nothing}: Returns a tuple of ints or nothing
+
+"""
+function getindex(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::ChessBoard)::Union{Tuple{Int,Int},Nothing}
+	for row in 1:8
+		for col in 1:8
+			res = board.board[row,col]
+			if res == piece
+				return (row,col)
+			end
+		end
+	end
+	return nothing
+end
+
+"""
+Returns true if piece on the tile is the opposite color of the piece provided
+"""
+function isopposite(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::ChessBoard,index::Int)
+	other_piece = getpiece(index,board)
+	if isa(other_piece,Empty)
+		return true
+	else
+		return piece.color != other_piece.color
+	end
+end
 
 
 ########################################
