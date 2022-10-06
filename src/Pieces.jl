@@ -224,30 +224,3 @@ function Empty(index::Int)
 
 end
 
-function can_castle(piece::Union{Rook,King},board::Board)
-	## check for rooks first
-	if isa(piece,Rook)
-		if !piece.is_first_move
-			return false
-		end
-
-
-	elseif isa(piece,King)
-		if !piece.is_first_move
-			return false
-		end
-	end
-
-end
-
-function find_king(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::Board)::Tile
-	color = piece.color
-	## find the king 
-	for i in 1:64
-		temp_piece = getpiece(i,board)
-		if isa(temp_piece,King) && temp_piece.color == color
-			tile = Tile(temp_piece)
-			return tile
-		end
-	end
-end

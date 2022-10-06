@@ -61,7 +61,6 @@ function getdiagonalmoves(tile::Tile,board::Board)::Vector{Int}
 		new_upright = (up_right_index[1] + 1,up_right_index[2] + 1)
 		if isvalid(new_upright) 
 			new_single = PAIR_TO_INDEX[new_upright]
-			println("Is opposite color? ",isopposite(piece,board,new_single))
 			if isopposite(piece,board,new_single) || isfree(new_single,board)
 				append!(moves,new_single)
 				up_right_index = new_upright

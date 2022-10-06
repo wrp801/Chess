@@ -156,8 +156,12 @@ function isfree(index::Tuple{Int,Int},board::Board)
 	board_tile = board.board[single_index]
 	return isa(board_tile,Empty)
 end
+
 """
 Returns a the piece from the board given an index location
+Params:
+	index::Int : an index of the board between 1 and 64 inclusive
+	board::Board : a board struct defined in Board.jl
 """
 function getpiece(index::Int,board::Board)::ChessPiece
 	str = INDEX_TO_TILE[index]
@@ -170,13 +174,17 @@ end
 
 """
 Given a string (like e5), will return the associated chess piece at that index
+Params:
+	tile::Union{Tile,String} : either takes a tile struct or a string (like "e5")
+	board::Board : a board struct defined in Board.jl
 
+Return: ChessPiece - returns the piece
 """
 function getpiece(tile::Union{Tile,String},board::Board)::ChessPiece
 	if isa(tile,Tile)
 		index = TILE_TO_INDEX[tile.square]
 	else
-		index = TILE_TO_INDEX[tile]
+		index = TILE_TO_INDEX[lowercase(tile)]
 	end
 	return board.board[index]
 end
@@ -204,14 +212,97 @@ end
 
 """
 Returns true if piece on the tile is the opposite color of the piece provided
+Params:
+	piece:: Union{Pawn,Knight,Bishop,Rook,Queen,King : the chess piece
+	board::Board - the chess board
+Return : Bool
 """
-function isopposite(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::ChessBoard,index::Int)
+function isopposite(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::ChessBoard,index::Int)::Bool
 	other_piece = getpiece(index,board)
 	if isa(other_piece,Empty)
 		return true
 	else
 		return piece.color != other_piece.color
 	end
+end
+
+
+"""
+Returns the tile of the associated King
+This is to be used to determine if the King is in check
+Params:
+	piece: Union{Pawn,Knight,Bishop,Rook,Queen,King} - the chess piece
+	board::Board - the chess board
+Return : Tile - returns the Tile where the King is located
+"""
+function find_king(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King},board::Board)::Tile
+	color = piece.color
+	## find the king 
+	for i in 1:64
+		temp_piece = getpiece(i,board)
+		if isa(temp_piece,King) && temp_piece.color == color
+			return Tile(temp_piece)
+		end
+	end
+end
+
+"""
+Returns the tile of the associated king of the same color provided as an argument to the function
+
+Params: 
+	color::Char - The color of the desired king, either 'w' or 'b'
+	board::Board - the chess board
+Return : Tile - returns the Tile where the King is located
+"""
+function find_king(color::Char,board::Board)::Tile
+	for i in 1:65
+		temp_piece = getpiece(i,board)
+		if isa(temp_piece,King) && temp_piece.color == color
+			return Tile(temp_piece)
+		end
+	end
+end
+
+"""
+Checks to see whether the King is in check or not
+
+Params:
+	piece::King - the King
+	board::Board - the chess board
+
+Return : Bool - returns true if the King is in check and false otherwise
+"""
+function ischeck(piece::King,board::Board)::Bool
+	## check for check on the diagonals
+	index = getindex(piece,board)
+	row = index[1]
+	col = index[2]
+	return false
+end
+
+
+"""
+Checks to see if the king is in checkmate or not
+"""
+function ischeckmate(piece::King,board::Board)::Bool
+end
+
+"""
+Checks to see if a castle can be performed
+"""
+function can_castle(piece::Union{Rook,King},board::Board)
+	## check for rooks first
+	if isa(piece,Rook)
+		if !piece.is_first_move
+			return false
+		end
+
+	elseif isa(piece,King)
+		if !piece.is_first_move
+			return false
+		end
+	end
+
 end
 
 
