@@ -27,19 +27,17 @@ function map_column(column::Int)::Char
 	return letter
 end
 
-
-
 ########################################
 #          Chess Piece Types                       
 ########################################
 
 mutable struct Empty <: ChessPiece
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	label::String 
 end
 
 mutable struct Pawn <: ChessPiece
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	color::Char ## w for white and b for black
 	is_first_move::Bool
 	points::Int
@@ -47,21 +45,21 @@ mutable struct Pawn <: ChessPiece
 end
 
 mutable struct Knight <: ChessPiece 
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	color::Char
 	points::Int
 	label::Char
 end
 
 mutable struct Bishop <: ChessPiece
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	color::Char
 	points::Int
 	label::Char
 end
 
 mutable struct Rook <: ChessPiece
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	color::Char
 	is_first_move::Bool
 	points::Int
@@ -69,14 +67,14 @@ mutable struct Rook <: ChessPiece
 end
 
 mutable struct Queen <: ChessPiece
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	color::Char
 	points::Int
 	label::Char
 end
 
 mutable struct King <: ChessPiece
-	Position::Tuple{Char,Int}
+	postion::Tuple{Char,Int}
 	color::Char
 	is_first_move::Bool
 	label::Char
@@ -95,8 +93,8 @@ end
 Parses the position of a chess piece and returns a string to be passed to a Tile struct 
 """
 function unpack_position(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King})
-	letter = piece.Position[1]
-	position = piece.Position[2]
+	letter = piece.postion[1]
+	position = piece.postion[2]
 	return string(letter,position)
 end
 

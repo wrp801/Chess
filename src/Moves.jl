@@ -206,7 +206,7 @@ Provides the list of all legal moves for a pawn
 function get_moves(pawn::Pawn,board::Board)
 
 	## if it is the first move then the pawn can move 1 or two spaces forward
-	# pawn.Position 
+	# pawn.postion 
 	tile = Tile(pawn)
 	current_index = TILE_TO_INDEX[tile.square]
 	moves = Vector{Int}() ## empty vector to add moves to 
@@ -291,7 +291,7 @@ function move!(moves::Vector{Tile},pawn::Pawn,board::Board,random::Bool)
 	board.board[old_index] = Empty(old_index) 
 	updated_position_char = move_to_make.square[1]
 	updated_position_num = parse(Int,move_to_make.square[2])
-	pawn.Position = (updated_position_char,updated_position_num)
+	pawn.postion = (updated_position_char,updated_position_num)
 	
 	pawn.is_first_move = false
 
@@ -352,7 +352,7 @@ function move!(moves::Vector{Tile},knight::Knight,board::Board,random::Bool)
 	board.board[old_index] = Empty(old_index) 
 	updated_position_char = move_to_make.square[1]
 	updated_position_num = parse(Int,move_to_make.square[2])
-	knight.Position = (updated_position_char,updated_position_num)
+	knight.postion = (updated_position_char,updated_position_num)
 end
 
 function move!(moves::Vector{Tile},bishop::Bishop,board::Board,random::Bool)
@@ -367,7 +367,7 @@ function move!(moves::Vector{Tile},bishop::Bishop,board::Board,random::Bool)
 	board.board[old_index] = Empty(old_index)
 	updated_position_char = move_to_make.square[1]
 	updated_position_num = parse(Int,move_to_make.square[2])
-	bishop.Position = (updated_position_char,updated_position_num)
+	bishop.postion = (updated_position_char,updated_position_num)
 end
 
 function move!(moves::Vector{Tile},rook::Rook,board::Board,random::Bool)
@@ -382,7 +382,7 @@ function move!(moves::Vector{Tile},rook::Rook,board::Board,random::Bool)
 	board.board[old_index] = Empty(old_index)
 	updated_position_char = move_to_make.square[1]
 	updated_position_num = parse(Int,move_to_make.square[2])
-	rook.Position = (updated_position_char,updated_position_num)
+	rook.postion = (updated_position_char,updated_position_num)
 	rook.is_first_move = false
 end
 
@@ -398,7 +398,7 @@ function move!(moves::Vector{Tile},queen::Queen,board::Board,random::Bool)
 	board.board[old_index] = Empty(old_index)
 	updated_position_char = move_to_make.square[1]
 	updated_position_num = parse(Int,move_to_make.square[2])
-	queen.Position = (updated_position_char,updated_position_num)
+	queen.postion = (updated_position_char,updated_position_num)
 end
 
 function move!(moves::Vector{Tile},king::King,board::Board,random::Bool)
@@ -413,7 +413,7 @@ function move!(moves::Vector{Tile},king::King,board::Board,random::Bool)
 	board.board[old_index] = Empty(old_index)
 	updated_position_char = move_to_make.square[1]
 	updated_position_num = parse(Int,move_to_make.square[2])
-	king.Position = (updated_position_char,updated_position_num)
+	king.postion = (updated_position_char,updated_position_num)
 	king.is_first_move = false
 end
 
