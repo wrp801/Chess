@@ -1,3 +1,4 @@
+export ChessPiece, Empty,Pawn,Bishop,Knight,Rook,Queen,King,Tile
 abstract type ChessPiece end
 ########################################
 #            Helpers                       

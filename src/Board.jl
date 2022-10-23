@@ -3,6 +3,7 @@ include("Pieces.jl")
 ########################################
 #          Data type definitions                       
 ########################################
+export ChessBoard,ChessSquare,Board
 
 abstract type ChessBoard end
 
