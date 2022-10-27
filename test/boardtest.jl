@@ -87,7 +87,7 @@ end
 	# # initialize!(board)	
 	# ## check to see if the tile e2 is indeed a pawn with two available moves
 	# e2 = getpiece("e2",board)
-	# e2_moves = get_moves(e2,board)
+	# e2_moves = getmoves(e2,board)
 	# @test typeof(e2) == Pawn && e2.color == 'w'
 	# @test length(e2_moves) == 2
 	# move!(e2_moves,e2,board,true)
@@ -114,7 +114,7 @@ end
 	opts = [wp1,wp2,wp3,wp4,wp5,wp6,wp7,wp8,bp1,bp2,bp3,bp4,bp5,bp6,bp7,bp8]
 	selected = sample(opts,1)[1]
 
-	moves = get_moves(selected,board)
+	moves = getmoves(selected,board)
 	@test length(moves) == 2
 
 end
