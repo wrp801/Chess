@@ -1,10 +1,9 @@
 module GameBoard
-	include("Pieces.jl")
-	include("Globals.jl")
-	using .Pieces
-	using .Globals
+	# include("Pieces.jl")
+	# include("Globals.jl")
+	using ..Pieces
+	using ..Globals
 	export Board, ChessBoard, ChessSquare, initialize!, print_board, getpiece, isfree, find_king, ischeck, ischeckmate, can_castle, isopposite
-	# export Pawn, Knight, Bishop, Rook, Queen, King, Tile, ChessPiece, Empty, map_column, unpack_position
 
 	########################################
 	#          Data type definitions                       
@@ -340,6 +339,8 @@ module GameBoard
 		end
 
 	end
+
+end ## end module
 	########################################
 	#          Chess Board with GUI                       
 	########################################
@@ -363,5 +364,3 @@ module GameBoard
 	#     end
 	# end
 	# show(c)
-
-end ## end module

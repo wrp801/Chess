@@ -1,10 +1,10 @@
 module Moves
-	include("Globals.jl")
-	include("Board.jl")
-	include("Pieces.jl")
-	using .GameBoard
-	using .Globals
-	using .Pieces
+	# include("Globals.jl")
+	# include("Pieces.jl")
+	# include("Board.jl")
+	using ..Pieces
+	using ..GameBoard
+	using ..Globals
 
 	export getmoves, move! 
 	# export Board, ChessBoard, ChessSquare, initialize!, print_board, getpiece, isfree, find_king, ischeck, ischeckmate, can_castle, isopposite
