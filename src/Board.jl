@@ -26,10 +26,28 @@ function Board()
 	return Board(board,move)
 end
 
+mutable struct Fen
+	placement::String ## where the pieces are on the board
+	turn::String ## whether it is white or black who moves first
+	castling::String ## the castling rights of white and black
+	enpassant::String ## possible en passant squares
+	halfmove::String ## number of moves each side has made
+	fullmove::String ## number of completed turns (is incremented when black moves)
+end
+
 
 ########################################
 #          Functions for board                       
 ########################################
+function readfen(fen::Union{String,Fen})
+    ## example fen for starting position is rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+    splits = split(fen," ") ## this will separate the fen string into appropriate actions
+    placement = splits[1] ## grab the piece positions
+    positions = split(placement,'/')
+    for pos in positions
+    
+    end
+end
 
 function isempty(board_square::ChessPiece)::Bool
 	return isa(board_square,Empty)
@@ -99,13 +117,14 @@ function initialize!(board::Board)
 		elseif row < 7 && row > 2
 		## populate the empty spots
 			for col in 1:8
-				board.board[row,col] = Empty(row,col)
+				# board.board[row,col] = Empty(row,col)
+				board.board[row,col] = Empty((row,col))
 			end
 
 		elseif row == 2
 		## populate the white pawns
 			for col in 1:8
-				board.board[row,col] = Pawn('w',col,index)	
+				board.board[row,col] = Pawn('w',col,(row,col))	
 			end
 
 		elseif row == 1
@@ -320,25 +339,32 @@ end
 Checks to see if the king is in checkmate or not
 """
 function ischeckmate(piece::King,board::Board)::Bool
+	println("REPLACE ME")
 end
 
 """
-Checks to see if a castle can be performed
+Checks to see if a kingside castle can be performed
 """
-function can_castle(piece::Union{Rook,King},board::Board)
+function can_castle_kingside(piece::King,board::Board)
 	## check for rooks first
-	if isa(piece,Rook)
-		if !piece.is_first_move
-			return false
-		end
-		
-	elseif isa(piece,King)
-		if !piece.is_first_move
+	if !piece.is_first_move
+		return false
+	end
+	index = piece.index
+	for i in 1:2
+		new_index = index + (8*i)
+		new_piece = getpiece(new_index,board)
+		if !isa(new_piece,Empty)
 			return false
 		end
 	end
-
+	rook = getpiece(index+24,board)
+	if !isa(rook,Rook) || !rook.is_first_move
+		return false
+	end
+	return true
 end
+
 
 	########################################
 	#          Chess Board with GUI                       

@@ -168,13 +168,15 @@ end
 ########################################
 """
 Provides the list of all legal moves for a pawn
+	Params:
+		pawn::Pawn - the pawn
+		board::Board - the board
+	Return: a vector of ints which are possible moves
 """
-function getmoves(pawn::Pawn,board::Board)
+function getmoves(pawn::Pawn,board::Board)::Vector{Int}
 
 	## if it is the first move then the pawn can move 1 or two spaces forward
-	# pawn.position 
-	tile = Tile(pawn)
-	current_index = TILE_TO_INDEX[tile.square]
+	current_index = pawn.index
 	moves = Vector{Int}() ## empty vector to add moves to 
 	if pawn.color == 'w'
 		## capture logic
@@ -206,8 +208,9 @@ function getmoves(pawn::Pawn,board::Board)
 				moves = filter(x -> x != m,moves)
 			end
 		end
-		tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
-		return tiles
+		return moves
+		# tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
+		# return tiles
 
 	elseif pawn.color == 'b'
 		diag_indices = (current_index +7, current_index - 8)
@@ -235,42 +238,39 @@ function getmoves(pawn::Pawn,board::Board)
 				moves = filter(x -> x != m,moves)
 			end
 		end
-		tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves) ## convert to tiles
-		return tiles
+		return moves
+		# tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves) ## convert to tiles
+		# return tiles
 	end
 end
 
 """
 Applies a move to the board for a pawn
 """
-function move!(moves::Vector{Tile},pawn::Pawn,board::Board,random::Bool)
+function move!(moves::Vector{Int},pawn::Pawn,board::Board,random::Bool)
 	# current_position = unpack_position(pawn) ## get the current tile of the piece
-	current_position = Tile(pawn)
+	# current_position = Tile(pawn)
+	current_position = pawn.index
 	if random
 		random_index = rand(1:length(moves))
 		move_to_make = moves[random_index]
-		
 	end
-	old_index = TILE_TO_INDEX[current_position.square]
-	new_index = TILE_TO_INDEX[move_to_make.square]
-	board.board[new_index] = pawn
-	board.board[old_index] = Empty(old_index) 
-	updated_position_char = move_to_make.square[1]
-	updated_position_num = parse(Int,move_to_make.square[2])
-	pawn.position = (updated_position_char,updated_position_num)
-	 
-	
-	pawn.is_first_move = false
-
 	## else this needs to select the optimal move based on a heuristic function
+
+	# old_index = TILE_TO_INDEX[current_position.square]
+	# new_index = TILE_TO_INDEX[move_to_make.square]
 	
+	board.board[move_to_make] = pawn
+	board.board[current_position] = Empty(current_position) 
+	pawn.index = move_to_make
+	pawn.is_first_move = false
 end
 
 
 """
 Provides the list of all legal moves for a knight
 """
-function getmoves(knight::Knight,board::Board)
+function getmoves(knight::Knight,board::Board)::Vector{Int}
 	## A Knight can move 8 spaces
 	# Options are
 	# 1. Index - 15
@@ -284,17 +284,20 @@ function getmoves(knight::Knight,board::Board)
 
 	# move_options = [6,10,15,17,-6,-10,-15,-17]
 	moves = Vector{Int}() ## empty vector for moves
-	tile = Tile(knight)
+	# tile = Tile(knight)
 	move_options = [(-2,-1),(-2,+1),(2,-1),(2,1),(1,2),(1,-2),(-1,2),(-1,-2)] ## represented in terms of (row,col) 
-	current_index = TILE_TO_INDEX[tile.square]
-	current_double_index = getindex(knight,board)
+	# current_index = TILE_TO_INDEX[tile.square]
+	current_index = knight.index
+	# current_double_index = getindex(knight,board)
+	current_double_index = getpair(current_index)
 	for move in move_options
 		new_row = current_double_index[1] + move[1]
 		new_col = current_double_index[2] + move[2]
 		if (new_row > 0 && new_row < 9) && (new_col > 0 && new_col < 9)
 			color = knight.color
 			spot_on_board = board.board[new_row,new_col]
-			new_index= PAIR_TO_INDEX[(new_row,new_col)]
+			# new_index= PAIR_TO_INDEX[(new_row,new_col)]
+			new_index = get_single_index((new_row,new_col))
 			if isa(spot_on_board,Empty)
 				append!(moves,new_index)
 			elseif spot_on_board.color != color
@@ -302,113 +305,122 @@ function getmoves(knight::Knight,board::Board)
 			end
 		end
 	end  ## end for
-	tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
-	return tiles
+	return moves
+	# tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
+	# return tiles
 end
 
 
-function move!(moves::Vector{Tile},knight::Knight,board::Board,random::Bool)
-	current_position = Tile(knight)
+function move!(moves::Vector{Int},knight::Knight,board::Board,random::Bool)
+	# current_position = Tile(knight)
+	current_position = knight.index
 	if random
 		random_index = rand(1:length(moves))
 		move_to_make = moves[random_index]
 	end
-	old_index = TILE_TO_INDEX[current_position.square]
-	new_index = TILE_TO_INDEX[move_to_make.square]
-	board.board[new_index] = knight
-	board.board[old_index] = Empty(old_index) 
-	updated_position_char = move_to_make.square[1]
-	updated_position_num = parse(Int,move_to_make.square[2])
-	knight.position = (updated_position_char,updated_position_num)
+	# new_index = get_single_index(move_to_make)
+	board.board[move_to_make] = knight
+	board.board[current_position] = Empty(current_position) 
+	knight.index = move_to_make
 end
 
-function move!(moves::Vector{Tile},bishop::Bishop,board::Board,random::Bool)
-	current_position = Tile(bishop)
+function move!(moves::Vector{Int},bishop::Bishop,board::Board,random::Bool)
+	# current_position = Tile(bishop)
+	current_position = bishop.index
 	if random
 		random_index = rand(1:length(moves))
 		move_to_make = moves[random_index]
 	end
-	old_index = TILE_TO_INDEX[current_position.square]
-	new_index = TILE_TO_INDEX[move_to_make.square]
-	board.board[new_index] = bishop
-	board.board[old_index] = Empty(old_index)
-	updated_position_char = move_to_make.square[1]
-	updated_position_num = parse(Int,move_to_make.square[2])
-	bishop.position = (updated_position_char,updated_position_num)
+	# old_index = TILE_TO_INDEX[current_position.square]
+	# new_index = TILE_TO_INDEX[move_to_make.square]
+	board.board[move_to_make] = bishop
+	board.board[current_position] = Empty(current_position)
+	bishop.index = move_to_make
 end
 
-function move!(moves::Vector{Tile},rook::Rook,board::Board,random::Bool)
-	current_position = Tile(rook)
+function move!(moves::Vector{Int},rook::Rook,board::Board,random::Bool)
+	current_position = rook.index
 	if random
 		random_index = rand(1:length(moves))
 		move_to_make = moves[random_index]
 	end
-	old_index = TILE_TO_INDEX[current_position.square]
-	new_index = TILE_TO_INDEX[move_to_make.square]
-	board.board[new_index] = rook
-	board.board[old_index] = Empty(old_index)
-	updated_position_char = move_to_make.square[1]
-	updated_position_num = parse(Int,move_to_make.square[2])
-	rook.position = (updated_position_char,updated_position_num)
+	# old_index = TILE_TO_INDEX[current_position.square]
+	# new_index = TILE_TO_INDEX[move_to_make.square]
+	board.board[move_to_make] = rook
+	board.board[current_position] = Empty(current_position) ## update the old position
+	rook.index = move_to_make
 	rook.is_first_move = false
 end
 
-function move!(moves::Vector{Tile},queen::Queen,board::Board,random::Bool)
-	current_position = Tile(queen)
+function move!(moves::Vector{Int},queen::Queen,board::Board,random::Bool)
+	# current_position = Tile(queen)
+	current_position = queen.index
 	if random
 		random_index = rand(1:length(moves))
 		move_to_make = moves[random_index]
 	end
-	old_index = TILE_TO_INDEX[current_position.square]
-	new_index = TILE_TO_INDEX[move_to_make.square]
-	board.board[new_index] = queen
-	board.board[old_index] = Empty(old_index)
-	updated_position_char = move_to_make.square[1]
-	updated_position_num = parse(Int,move_to_make.square[2])
-	queen.position = (updated_position_char,updated_position_num)
+	# old_index = TILE_TO_INDEX[current_position.square]
+	# new_index = TILE_TO_INDEX[move_to_make.square]
+	board.board[move_to_make] = queen
+	board.board[current_position] = Empty(current_position)
+	queen.index = move_to_make
 end
 
-function move!(moves::Vector{Tile},king::King,board::Board,random::Bool)
-	current_position = Tile(king)
+function move!(moves::Vector{Int},king::King,board::Board,random::Bool)
+	# current_position = Tile(king)
+	current_position = king.index
 	if random
 		random_index = rand(1:length(moves))
 		move_to_make = moves[random_index]
 	end
-	old_index = TILE_TO_INDEX[current_position.square]
-	new_index = TILE_TO_INDEX[move_to_make.square]
-	board.board[new_index] = king
-	board.board[old_index] = Empty(old_index)
-	updated_position_char = move_to_make.square[1]
-	updated_position_num = parse(Int,move_to_make.square[2])
-	king.position = (updated_position_char,updated_position_num)
+	# old_index = TILE_TO_INDEX[current_position.square]
+	# new_index = TILE_TO_INDEX[move_to_make.square]
+	board.board[move_to_make] = king
+	board.board[current_position] = Empty(current_position)
+	king.index = move_to_make
 	king.is_first_move = false
 end
 
 
-function getmoves(bishop::Bishop,board::Board)
+"""
+Returns all the legal moves for the bishop
+"""
+function getmoves(bishop::Bishop,board::Board)::Vector{Int}
 	tile = Tile(bishop)
 	moves = getdiagonalmoves(tile,board)
-	tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
-	return tiles
+	# tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
+	# return tiles
+	return moves
 end
 
-function getmoves(rook::Rook,board::Board)
+"""
+Returns all the legal moves for the rook
+"""
+function getmoves(rook::Rook,board::Board)::Vector{Int}
 	tile = Tile(rook)
 	moves = get_rook_moves(tile,board)
-	tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
-	return tiles
+	# tiles = map(x -> Tile(INDEX_TO_TILE[x]),moves)
+	# return tiles
+	return moves
 end
 
+"""
+Returns all the legal moves of the queen
+"""
 function getmoves(queen::Queen,board::Board)
 	tile = Tile(queen)
 	diag_moves = getdiagonalmoves(tile,board)
 	rook_moves = get_rook_moves(tile,board)
 	combo = union(diag_moves,rook_moves)
-	tiles = map(x -> Tile(INDEX_TO_TILE[x]),combo)
-	return tiles
+	# tiles = map(x -> Tile(INDEX_TO_TILE[x]),combo)
+	# return tiles
+	return combo
 end
 
 
+"""
+Returns all the legal moves for the king
+"""
 function getmoves(king::King,board::Board)
 	## check to see if piece can castle
 end

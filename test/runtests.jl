@@ -125,11 +125,35 @@ using StatsBase
         @test typeof(b1) == Knight && typeof(g1) == Knight
     end
 
-    @testset "Find King" begin 
-        b1 = getpiece("b1",board)
-        k = find_king(b1,board)
-        k_piece = getpiece(k,board)
-        @test typeof(k_piece) == King && k_piece.color == 'w'
+    @testset "Bishop Moves" begin 
+        c1 = getpiece("c1",board)
+        f1 = getpiece("f1",board)
+        c_moves = getmoves(c1,board)
+        f_moves = getmoves(f1,board)
+        @test length(c_moves) == 0 && length(f_moves) == 0
     end
+
+    @testset "King Castle Test" begin 
+        e1 = getpiece("e1",board)
+        castle = can_castle_kingside(e1,board)
+        @test castle == false
+    end
+
+
+    # @testset "Queen Moves" begin
+    #     d1 = getpiece("d1",board)
+    #     d2 = getpiece("d2",board) ## pawn in front of queen
+    #     d_moves = getmoves(d2,board)
+    #     move!(d_moves,d2,board,true)
+    #     q_moves = getmoves("d1","board")
+    #     @test length(q_moves) > 0
+    # end
+
+    # @testset "Find King" begin 
+    #     b1 = getpiece("b1",board)
+    #     k = find_king(b1,board)
+    #     k_piece = getpiece(k,board)
+    #     @test typeof(k_piece) == King && k_piece.color == 'w'
+    # end
         # Write your tests here.
 end

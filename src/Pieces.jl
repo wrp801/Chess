@@ -33,58 +33,58 @@ end
 ########################################
 
 mutable struct Empty <: ChessPiece
-	position::Tuple{Char,Int}
+	index::Int
 	label::String 
 end
 
 mutable struct Pawn <: ChessPiece
-	position::Tuple{Char,Int}
+	index::Int
 	color::Char ## w for white and b for black
 	is_first_move::Bool
 	points::Int
 	label::Char
-	location::Tuple{Int,Int}
+	# location::Tuple{Int,Int}
 end
 
 mutable struct Knight <: ChessPiece 
-	position::Tuple{Char,Int}
+	index::Int
 	color::Char
 	points::Int
 	label::Char
-	location::Tuple{Int,Int}
+	# location::Tuple{Int,Int}
 end
 
 mutable struct Bishop <: ChessPiece
-	position::Tuple{Char,Int}
+	index::Int
 	color::Char
 	points::Int
 	label::Char
-	location::Tuple{Int,Int}
+	# location::Tuple{Int,Int}
 end
 
 mutable struct Rook <: ChessPiece
-	position::Tuple{Char,Int}
+	index::Int
 	color::Char
 	is_first_move::Bool
 	points::Int
 	label::Char
-	location::Tuple{Int,Int}
+	# location::Tuple{Int,Int}
 end
 
 mutable struct Queen <: ChessPiece
-	position::Tuple{Char,Int}
+	index::Int
 	color::Char
 	points::Int
 	label::Char
-	location::Tuple{Int,Int}
+	# location::Tuple{Int,Int}
 end
 
 mutable struct King <: ChessPiece
-	position::Tuple{Char,Int}
+	index::Int
 	color::Char
 	is_first_move::Bool
 	label::Char
-	location::Tuple{Int,Int}
+	# location::Tuple{Int,Int}
 end
 
 mutable struct Tile
@@ -92,8 +92,9 @@ mutable struct Tile
 end
 
 function Tile(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King})::Tile
-	pos = unpack_position(piece)
-	return Tile(pos)
+	return get_tile(piece.index)
+	# pos = unpack_position(piece)
+	# return Tile(pos)
 end
 
 """
@@ -111,105 +112,210 @@ end
 #         Constructors for Pieces                       
 ########################################
 
-function Knight(color::Char,column::Int,index::Tuple{Int,Int})
+function Knight(color::Char,column::Int,index::Int)
 	## map the letter to the column index 
 	letter = map_column(column)
 	pts = 3
 	if color == 'b'
 		pos = (letter,8)
 		label = 'n'
-		return Knight(pos,color,pts,label,index)
+		return Knight(index,color,pts,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'N'
-		return Knight(pos,color,pts,label,index)		
+		return Knight(index,color,pts,label)		
+	end
+end
+
+function Knight(color::Char,column::Int,pair::Tuple{Int,Int})
+	## map the letter to the column index 
+	index = get_single_index(pair)
+	letter = map_column(column)
+	pts = 3
+	if color == 'b'
+		pos = (letter,8)
+		label = 'n'
+		return Knight(index,color,pts,label)
+	elseif color == 'w'
+		pos = (letter,1)
+		label = 'N'
+		return Knight(index,color,pts,label)		
 	end
 end
 
 
-function Bishop(color::Char,column::Int,index::Tuple{Int,Int})
+function Bishop(color::Char,column::Int,index::Int)
 	letter = map_column(column)
 	pts = 3
 
 	if color == 'b'
 		pos = (letter,8)
 		label = 'b'
-		return Bishop(pos,color,pts,label,index)
+		return Bishop(index,color,pts,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'B'
-		return Bishop(pos,color,pts,label,index)
+		return Bishop(index,color,pts,label)
 	else
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
 end
 
-function Rook(color::Char, column::Int, index::Tuple{Int,Int})
+function Bishop(color::Char,column::Int,pair::Tuple{Int,Int})
+	index = get_single_index(pair)
+	letter = map_column(column)
+	pts = 3
+
+	if color == 'b'
+		pos = (letter,8)
+		label = 'b'
+		return Bishop(index,color,pts,label)
+	elseif color == 'w'
+		pos = (letter,1)
+		label = 'B'
+		return Bishop(index,color,pts,label)
+	else
+		println("No color or invalid color entered; please enter either b for black or w for white")
+	end
+end
+
+function Rook(color::Char, column::Int, index::Int)
 	letter = map_column(column)
 	pts = 5
 
 	if color == 'b'
 		pos = (letter,8)
 		label = 'r'
-		return Rook(pos,color,true,pts,label,index)
+		return Rook(index,color,true,pts,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'R'
-		return Rook(pos,color,true,pts,label,index)
+		return Rook(index,color,true,pts,label)
 	else
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
 
 end
 
-function Queen(color::Char,column::Int,index::Tuple{Int,Int})
+function Rook(color::Char, column::Int, pair::Tuple{Int,Int})
+	index = get_single_index(pair)
+	letter = map_column(column)
+	pts = 5
+
+	if color == 'b'
+		pos = (letter,8)
+		label = 'r'
+		return Rook(index,color,true,pts,label)
+	elseif color == 'w'
+		pos = (letter,1)
+		label = 'R'
+		return Rook(index,color,true,pts,label)
+	else
+		println("No color or invalid color entered; please enter either b for black or w for white")
+	end
+
+end
+
+function Queen(color::Char,column::Int,index::Int)
 	letter = map_column(column)
 	pts = 9
 
 	if color == 'b'
 		pos = (letter,8)
 		label = 'q'
-		return Queen(pos,color,pts,label,index)
+		return Queen(index,color,pts,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'Q'
-		return Queen(pos,color,pts,label,index)
+		return Queen(index,color,pts,label)
 	else
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
 end
 
-function Pawn(color::Char,column::Int,index::Tuple{Int,Int})
+function Queen(color::Char, column::Int, pair::Tuple{Int,Int})
+	index = get_single_index(pair)
+	letter = map_column(column)
+	pts = 9
+
+	if color == 'b'
+		pos = (letter,8)
+		label = 'q'
+		return Queen(index,color,pts,label)
+	elseif color == 'w'
+		pos = (letter,1)
+		label = 'Q'
+		return Queen(index,color,pts,label)
+	else
+		println("No color or invalid color entered; please enter either b for black or w for white")
+	end
+
+end
+
+function Pawn(color::Char,column::Int,index::Int)
 	letter = map_column(column)
 	pts = 1
 	if color == 'b'
 		pos = (letter,7)
 		label = 'p'
-	return Pawn(pos,color,true,pts,label,index)
+	return Pawn(index,color,true,pts,label)
 	elseif color == 'w'
 		pos = (letter,2)
 		label = 'P'
-		return Pawn(pos,color,true,pts,label,index)
+		return Pawn(index,color,true,pts,label)
 	else 
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
 end
 
-function King(color::Char,column::Int,index::Tuple{Int,Int})
+function Pawn(color::Char, column::Int, pair::Tuple{Int,Int})
+	index = get_single_index(pair)
+	letter = map_column(column)
+	pts = 1
+	if color == 'b'
+		pos = (letter,7)
+		label = 'p'
+	return Pawn(index,color,true,pts,label)
+	elseif color == 'w'
+		pos = (letter,2)
+		label = 'P'
+		return Pawn(index,color,true,pts,label)
+	else 
+		println("No color or invalid color entered; please enter either b for black or w for white")
+	end
+end
+
+function King(color::Char,column::Int,index::Int)
 	letter = map_column(column)
 
 	if color == 'b'
 		pos = (letter,8)
 		label = 'k'
-		return King(pos,color,true,label,index)
+		return King(index,color,true,label)
 	elseif color == 'w'
 		pos = (letter,1)
 		label = 'K'
-		return King(pos,color,true,label,index)
+		return King(index,color,true,label)
 	else
 		println("No color or invalid color entered; please enter either b for black or w for white")
 	end
+end
 
+function King(color::Char, column::Int, pair::Tuple{Int,Int})
+	index = get_single_index(pair)
+	letter = map_column(column)
+
+	if color == 'b'
+		pos = (letter,8)
+		label = 'k'
+		return King(index,color,true,label)
+	elseif color == 'w'
+		pos = (letter,1)
+		label = 'K'
+		return King(index,color,true,label)
+	else
+		println("No color or invalid color entered; please enter either b for black or w for white")
+	end
 end
 
 function Empty(row::Int,column::Int)
@@ -221,12 +327,18 @@ end
 
 function Empty(index::Int)
 	label = "*"
-	tile = Tile(INDEX_TO_TILE[index])
-	letter = tile.square[1]
-	num = tile.square[2]
-	pos = (letter,num)
-	return Empty(pos,label)
+	# tile = Tile(INDEX_TO_TILE[index])
+	# letter = tile.square[1]
+	# num = tile.square[2]
+	# pos = (letter,num)
+	return Empty(index,label)
 
+end
+
+function Empty(pair::Tuple{Int,Int})
+	index = get_single_index(pair)
+	label = "*"
+	return Empty(index,label)
 end
 
 
@@ -236,7 +348,7 @@ Params:
 	index::Int - the single index (1-64) of the chess piece
 """
 function get_tile(index::Int)
-	return INDEX_TO_TILE[index]
+	return Tile(INDEX_TO_TILE[index])
 end
 
 """
@@ -246,8 +358,17 @@ Params:
 """
 function get_tile(pair::Tuple{Int,Int})
 	single_index = PAIR_TO_INDEX[pair]
-	return INDEX_TO_TILE[single_index]
+	return Tile(INDEX_TO_TILE[single_index])
 
+end
+
+"""
+Function to get the tile of the board given a chess piece.
+Params:
+	piece::ChessPiece - the chess piece desired 
+"""
+function get_tile(piece::ChessPiece)
+	return Tile(INDEX_TO_TILE[piece.index])
 end
 
 """
@@ -267,6 +388,16 @@ Params:
 function getpair(tile::Tile)
 	index = TILE_TO_INDEX[tile.square]
 	return INDEX_TO_PAIR[index]
+end
+
+
+"""
+Returns the [row,index] pair of the position given the ChessPiece
+Params:
+	piece::ChessPiece - The ChessPiece
+"""
+function getpair(piece::ChessPiece)
+	return INDEX_TO_PAIR[piece.index]
 end
 
 """
