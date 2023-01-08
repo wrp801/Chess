@@ -321,8 +321,9 @@ end
 function Empty(row::Int,column::Int)
 	letter = map_column(column)
 	pos = (letter,row)
+	index = get_single_index((row,column))
 	label = "*"
-	return Empty(pos,label)
+	return Empty(index,label)
 end
 
 function Empty(index::Int)

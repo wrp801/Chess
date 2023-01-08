@@ -35,17 +35,118 @@ mutable struct Fen
 	fullmove::String ## number of completed turns (is incremented when black moves)
 end
 
+"""
+Creates a Fen struct from a string
+"""
+function Fen(fen::String)
+    splits = split(fen," ") ## this will separate the fen string into appropriate actions
+    return Fen(splits[1],splits[2],splits[3],splits[4],splits[5],splits[6])
+end
+
 
 ########################################
 #          Functions for board                       
 ########################################
-function readfen(fen::Union{String,Fen})
+"""
+Updates a board to the fen position provided
+Params:
+	fen::Fen - the Fen struct of the board position
+	board::Board - the board to modify
+"""
+function readfen!(fen::Fen,board::Board)
     ## example fen for starting position is rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-    splits = split(fen," ") ## this will separate the fen string into appropriate actions
-    placement = splits[1] ## grab the piece positions
-    positions = split(placement,'/')
-    for pos in positions
-    
+    positions = fen.placement
+    rows = split(positions,"/") ## this is where every 
+	## populate every cell as empty
+	for i in 1:8
+		for j in 1:8
+			board.board[i,j] = Empty(i,j)
+		end
+	end
+	rid = 8 ## row number
+	for row in rows
+		cid = 1 ## column number
+		if length(row) == 8 ## this is the easiest case to handle
+			for char in row
+				if isdigit(char)
+					digit = parse(Int,char)
+					cid+=digit
+					continue
+				else
+					## black pieces
+					if char == 'r'
+						board.board[rid,cid] = Rook('b',cid,(rid,cid))
+					elseif char == 'n'
+						board.board[rid,cid] = Knight('b',cid,(rid,cid))
+					elseif char == 'b'
+						board.board[rid,cid] = Bishop('b',cid,(rid,cid))
+					elseif char == 'k'
+						board.board[rid,cid] = King('b',cid,(rid,cid))
+					elseif char == 'q'
+						board.board[rid,cid] = Queen('b',cid,(rid,cid))
+					elseif char == 'p'
+						board.board[rid,cid] = Pawn('b',cid,(rid,cid))
+					## white pieces
+					elseif char == 'R'
+						board.board[rid,cid] = Rook('w',cid,(rid,cid))
+					elseif char == 'N'
+						board.board[rid,cid] = Knight('w',cid,(rid,cid))
+					elseif char == 'B'
+						board.board[rid,cid] = Bishop('w',cid,(rid,cid))
+					elseif char == 'K'
+						board.board[rid,cid] = King('w',cid,(rid,cid))
+					elseif char == 'Q'
+						board.board[rid,cid] = Queen('w',cid,(rid,cid))
+					elseif char == 'P'
+						board.board[rid,cid] = Pawn('w',cid,(rid,cid))
+					end
+				end
+				cid+=1
+			end
+		else
+			cid = 1
+			for char in row
+				if isdigit(char)
+					digit = parse(Int,char)
+					cid += digit
+					continue
+					# dig = parse(Int,char)
+					# for i in 1:dig
+					# 	board.board[rid,cid] = Empty(rid,cid)
+					# 	cid+=1 
+					# end
+				else
+					if char == 'r'
+						board.board[rid,cid] = Rook('b',cid,(rid,cid))
+					elseif char == 'n'
+						board.board[rid,cid] = Knight('b',cid,(rid,cid))
+					elseif char == 'b'
+						board.board[rid,cid] = Bishop('b',cid,(rid,cid))
+					elseif char == 'k'
+						board.board[rid,cid] = King('b',cid,(rid,cid))
+					elseif char == 'q'
+						board.board[rid,cid] = Queen('b',cid,(rid,cid))
+					elseif char == 'p'
+						board.board[rid,cid] = Pawn('b',cid,(rid,cid))
+					## white pieces
+					elseif char == 'R'
+						board.board[rid,cid] = Rook('w',cid,(rid,cid))
+					elseif char == 'N'
+						board.board[rid,cid] = Knight('w',cid,(rid,cid))
+					elseif char == 'B'
+						board.board[rid,cid] = Bishop('w',cid,(rid,cid))
+					elseif char == 'K'
+						board.board[rid,cid] = King('w',cid,(rid,cid))
+					elseif char == 'Q'
+						board.board[rid,cid] = Queen('w',cid,(rid,cid))
+					elseif char == 'P'
+						board.board[rid,cid] = Pawn('w',cid,(rid,cid))
+					end
+					cid +=1
+				end
+			end
+        end
+		rid-=1
     end
 end
 
