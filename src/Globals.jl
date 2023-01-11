@@ -1,5 +1,5 @@
 module Globals
-	export INDEX_TO_TILE, TILE_TO_INDEX, INDEX_TO_PAIR, PAIR_TO_INDEX, getindex, getpair, get_tile
+	export INDEX_TO_TILE, TILE_TO_INDEX, INDEX_TO_PAIR, PAIR_TO_INDEX, getindex, getpair, get_tile, STARTING_FEN
 	"""
 	Creates a dictionary with the index of the board (1-64) as the key and the corresponding
 	tile (i.e. a8, h1) as the values
@@ -97,4 +97,5 @@ module Globals
 	const TILE_TO_INDEX = create_tile_to_index_mapping() ## used as a global for fast lookup
 	const INDEX_TO_PAIR = create_single_to_double_mapping() ## used as a global for fast lookup
 	const PAIR_TO_INDEX = create_double_to_single_mapping() ## used a global for fast lookup
+    const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 end ## end module

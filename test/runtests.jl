@@ -138,6 +138,13 @@ using StatsBase
         castle = can_castle_kingside(e1,board)
         @test castle == false
     end
+    
+    @testset "Pawn Attacking squares" begin 
+
+        e2 = getpiece("e2",board)
+        squares = attackingtiles(e2,board)
+        @test length(squares) == 2
+    end
 
 
     # @testset "Queen Moves" begin
