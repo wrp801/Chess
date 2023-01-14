@@ -262,7 +262,7 @@ function attackingtiles(piece::Pawn,board::Board)::Vector{Tile}
     if piece.color == 'w'
         attack_indices = (-7,+9)
     elseif piece.color == 'b'
-        attack_indices == (-9,+7)
+        attack_indices = (-9,+7)
     end
     
     for aindex in attack_indices
@@ -274,4 +274,9 @@ function attackingtiles(piece::Pawn,board::Board)::Vector{Tile}
     end
     return tiles
 end
+
+# function attackingtiles(piece::Knight, board::Board)::Vector{Tile}
+#
+# end
+#
 

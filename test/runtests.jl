@@ -139,10 +139,16 @@ using StatsBase
         @test castle == false
     end
     
-    @testset "Pawn Attacking squares" begin 
+    @testset "White Pawn Attacking squares" begin 
 
         e2 = getpiece("e2",board)
         squares = attackingtiles(e2,board)
+        @test length(squares) == 2
+    end
+
+    @testset "Black Pawn Attacking squares" begin
+        e7 = getpiece("e7",board)
+        squares = attackingtiles(e7,board)
         @test length(squares) == 2
     end
 

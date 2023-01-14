@@ -5,10 +5,12 @@ using ..Globals
 #         Set of Tiles Attacked
 ########################################
 
-BLACK_PIECES_ACTIVE = Vector{ChessPiece}
-WHITE_PIECES_ACTIVE = Vector{ChessPiece}
-BLACK_TILES_ATTACKED = Vector{Tile}
-WHITE_TILES_ATTACKED = Vector{Tile}
+BLACK_PIECES_ACTIVE = Vector{ChessPiece}()
+WHITE_PIECES_ACTIVE = Vector{ChessPiece}()
+BLACK_TILES_ATTACKED = Vector{Int}()
+WHITE_TILES_ATTACKED = Vector{Int}()
+
+
 
 ########################################
 #          Data type definitions                       
@@ -58,6 +60,18 @@ end
 #######################################
 #          Functions for board                       
 ########################################
+function update!(piece_vector::Vector{ChessPiece},tile_vector::Vector{Int},board::Board)
+    pawns = filter(x -> isa(x,Pawn),piece_vector)
+    other_pieces = filter(x -> !isa(x,Pawn), piece_vector)
+
+    pawn_attacks = map(x -> attackingtiles(x,board), pawns)
+    other_attacks = map(x -> getmoves(x,board),other_pieces)
+
+    return union(pawn_attacks,other_attacks)
+
+end
+
+
 """
 Updates a board to the fen position provided
 Params:
@@ -202,6 +216,10 @@ function readfen!(fen::Fen,board::Board)
         end
 		rid-=1
     end
+    ## now populate the attacked squares 
+
+    ## black pieces 
+
 end
 
 
