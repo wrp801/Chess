@@ -70,7 +70,7 @@ function isvalid(index::Tuple{Int,Int})::Bool
 	if i1 < 1 || i2 > 8
 		return false
 	end
-	if i2 < 1 || i2 > 8
+	if i2 < 1 || i1 > 8
 		return false
 	end
 	return true
@@ -254,11 +254,11 @@ function can_castle_queenside(piece::King,board::Board)::Bool
 end
 
 
-function attackingtiles(piece::Pawn,board::Board)::Vector{Tile}
+function attackingtiles(piece::Pawn,board::Board)::Vector{Int}
     ## TODO: need to account for en passant 
     
     ## get the possible attacking indices from the tile
-    tiles = Vector{Tile}()
+    tiles = Vector{Int}()
     if piece.color == 'w'
         attack_indices = (-7,+9)
     elseif piece.color == 'b'
@@ -267,16 +267,10 @@ function attackingtiles(piece::Pawn,board::Board)::Vector{Tile}
     
     for aindex in attack_indices
         new_index = piece.index + aindex
-        if new_index < 65 && new_index > 0
-            tile = get_tile(new_index)
-            push!(tiles,tile)
+        if new_index < 65 && new_index > 0 && !isnothing(new_index)
+            append!(tiles,new_index)
         end
     end
     return tiles
 end
-
-# function attackingtiles(piece::Knight, board::Board)::Vector{Tile}
-#
-# end
-#
 

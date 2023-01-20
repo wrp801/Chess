@@ -1,4 +1,5 @@
 using ..Globals
+using RecursiveArrayTools
 
 
 ########################################
@@ -64,8 +65,8 @@ function update!(piece_vector::Vector{ChessPiece},tile_vector::Vector{Int},board
     pawns = filter(x -> isa(x,Pawn),piece_vector)
     other_pieces = filter(x -> !isa(x,Pawn), piece_vector)
 
-    pawn_attacks = map(x -> attackingtiles(x,board), pawns)
-    other_attacks = map(x -> getmoves(x,board),other_pieces)
+    pawn_attacks = convert(Array,VectorOfArray(map(x -> attackingtiles(x,board), pawns)))
+    other_attacks = convert(Array,VectorOfArray(map(x -> getmoves(x,board),other_pieces)))
 
     return union(pawn_attacks,other_attacks)
 

@@ -93,9 +93,8 @@ end
 
 function Tile(piece::Union{Pawn,Knight,Bishop,Rook,Queen,King})::Tile
 	return get_tile(piece.index)
-	# pos = unpack_position(piece)
-	# return Tile(pos)
 end
+
 
 """
 Parses the position of a chess piece and returns a string to be passed to a Tile struct 

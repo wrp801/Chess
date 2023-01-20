@@ -17,9 +17,11 @@ Returns all the available diagonal moves. Desgined to be a helper function and i
 """
 function getdiagonalmoves(tile::Tile,board::Board)::Vector{Int}
 	moves = Vector{Int}() ## the vecotr to be populated with valid diagonal moves
-	pos = tile.square
-	index = TILE_TO_INDEX[pos]
-	double_index = INDEX_TO_PAIR[index]
+	# pos = tile.square
+	# index = TILE_TO_INDEX[pos]
+	# double_index = INDEX_TO_PAIR[index]
+    index = get_single_index(tile)
+    double_index = getpair(tile)
 	## check the up-right diagonal
 	up_right_index = double_index
 	piece = getpiece(index,board)
